@@ -1,80 +1,1136 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: http://server.aouk.co.uk/aoapi/v1
 
 # AO Core API
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+AO is a simple API allowing consumers to view products and items.
 
-## Questions Collection [/questions]
+# AO Core API Root [/]
 
-### List All Questions [GET]
+This resource does not have any attributes. Instead it offers the initial
+API affordances in the form of the links in the JSON body.
+
+It is recommend to follow the “url” link values,
+[Link](https://tools.ietf.org/html/rfc5988) or Location headers where
+applicable to retrieve resources. Instead of constructing your own URLs,
+to keep your client decoupled from implementation details.
+
+## Retrieve the Entry Point [GET]
 
 + Response 200 (application/json)
 
-        [
+        {
+            "product_url": "/products",
+            "copy_url": "/copies",
+            "price_url": "/prices",
+            "picture_url": "/pictures",
+        }
+
+## Group Profile
+
+Resources related to profiles in the API.
+
+## Available Profiles [/profiles]
+
+### Profiles [GET]
+
++ Response 200 (application/json)
+
+        {["all", "test"]}
+
+## Permissions [/profiles/premissions]
+
+### Premissions [GET]
+
++ Response 200 (application/json)
+
+        {"Delete Product":"allowed","Create Picture":"allowed",
+        "Delete Logo":"allowed","Edit Edition":"allowed","Swap Page Objects":"allowed",
+        "Delete Page Object":"allowed","Link/ Unlink Copy":"denied",
+        "Add/Create Page Object":"allowed","Link Product":"denied",
+        "Add Edition product":"allowed","Hide Price":"denied",
+        "Link/Unlink Movie":"denied","Edit Movie":"allowed","Edit Product":"allowed",
+        "Create Product":"allowed","Edit Page Info":"allowed","Edit Price":"allowed",
+        "Edit Copy":"denied","Create Edition":"denied","Move Pages":"denied",
+        "Create Copy":"allowed","Link/Unlink Picture":"denied","Create Movie":"allowed",
+        "Delete Movie":"allowed","Delete Edition":"denied","Edit Logo":"allowed",
+        "Edit Picture":"allowed","Delete Price":"denied","Add Pages":"denied",
+        "Archive Product":"allowed","Delete Copy":"allowed","Delete Picture":"allowed",
+        "Create Price":"allowed","Create Logo":"allowed","Delete Pages":"denied",
+        "Link/Unlink Logo":"denied","Search for Products":"allowed"}
+
+## Group Copy
+
+Resources related to copies in the API.
+
+## Metadata [/copies/metadata]
+
+### Metadata Detail [GET]
+
++ Response 200 (application/json)
+
+        {
+            "profile":"all",
+            "fields":{
+                "CHAN Flyer":"Boolean",
+                "CHAN Consumer Web":"Boolean",
+                "User":"String",
+                "Category":"INT",
+                "FC Brand 1":"Boolean",
+                "CHAN All":"Boolean",
+                "FCGP":"Boolean",
+                "All Companies":"Boolean",
+                "Styled":"INT",
+                "CHAN Reservations":"Boolean",
+                "Copy Text":"TEXT",
+                "Language":"INT",
+                "Flight Centre":"Boolean",
+                "Valid From":"DATE",
+                "Status":"INT",
+                "Order":"INT",
+                "Overnight":"String",
+                "Comments":"String",
+                "New Field":"Boolean",
+                "Mod. Date":"TIMESTAMP",
+                "FC Region 1":"Boolean",
+                "CHAN Brochure":"Boolean",
+                "CHAN Internal":"Boolean",
+                "Copy Name":"String",
+                "Header":"String",
+                "Flight Centre Retail":"Boolean",
+                "CHAN Agent Web":"Boolean",
+                "Day":"String",
+                "Valid To":"DATE",
+                "Page Ref":"String"},
+            "helperSelections":{
+                "Copy Name":[
+                    "IH.address", "IH.bonus",
+                    "IH.class1",
+                    "IH.class2",
+                    "IH.conditions",
+                    "IH.connections",
+                    "IH.currency",
+                    "IH.day1",
+                    "IH.day2","IH.departs","IH.description","IH.dining","IH.distances","IH.duration","IH.electricity","IH.events","IH.experience","IH.favourite","IH.get in the know","IH.getting around","IH.highlights","IH.history culture","IH.includes","IH.includes2","IH.insidertip1","IH.insidertip2","IH.itinerary","IH.language","IH.llifestyle","IH.local customs","IH.map ref","IH.metro","IH.name","IH.natural wonders","IH.note","IH.open","IH.operates","IH.optional","IH.overview","IH.overview brox","IH.overview2","IH.property features","IH.rail pass","IH.rating children","IH.rating max pax","IH.room features","IH.service","IH.ship","IH.shopping","IH.star rating","IH.stopover note","IH.tag line","IH.things to do","IH.time","IH.transfer","IH.travel advice","IH.validity","IH.what to pack","IH.when to go"]},
+            "pickList":{
+                "Status":["Pending","Available","Expired"],
+                "brand":["All","AUFC","AUSF"],
+                "Styled":["Quark Tags","InDesign Tags","HTML Tags","Markdown"]}
+        }
+
+## Copies Collection [/copies?limit={limit_num}&offset={offset_num}&profile={profile_name}]
+
++ length
++ offset
++ total
++ copies - An array of Copy objects.
+
++ Parameters
+    + limit_num (optional, number, `10`) ... Maximum number of posts to retrieve, default value is 10
+    + offset_num (optional, number, `0`) ... offset
+    + profile_name (optional, string, `hotels`) ... profile
+
+### List All Copies [GET]
+
++ Response 200 (application/json)
+
+    + Headers
+        
+            Link: </copies?limit=10&offset=10&profile=hotels>; rel="next"
+            
+    + Body
+
+                {
+                    "offset": 0,
+                    "limit":10,
+                    "total": 3,
+                    "content": [{
+                            "id": 1,
+                            "name": "copy name 1",
+                            "fields": [
+                                "Content" : "copy example 1",
+                                "Language" : "en",
+                                "Comments" : ""  
+                            ]
+                    }, {
+                            "id": 2,
+                            "name": "copy name 2",
+                            "fields": [
+                                "Content" : "copy example 2",
+                                "Language" : "en",
+                                "Comments" : ""  
+                            ]
+                    }, {
+                            "id": 3,
+                            "name": "copy name 3",
+                            "fields": [
+                                "Content" : "copy example 3",
+                                "Language" : "en",
+                                "Comments" : ""  
+                            ]
+                    }]
+                }
+
+## Retrive a Copy by id [/copies/{copy_id}?profile={profile_name}]
+
++ id - serial number of copy.
++ name - name of copy.
++ fields - An array of copy fields.
+
++ Parameters
+    + copy_id (required, number, `1`) ... Serial Number of the Copy
+    + profile_name (optional, string, `hotels`) ... profile
+
+### View a Copy Detail [GET]
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "name": "copy_name_1",
+            "fields": [
+                "Content" : "copy example 1",
+                "Language" : "en",
+                "Comments" : ""  
+            ]
+        }
+
+## Retrive a Copy by name [/copies/{copy_name}/name?profile={profile_name}]
+
+May return many copies!
+
++ id - serial number of copy.
++ name - name of copy.
++ fields - An array of copy fields.
+
++ Parameters
+    + copy_name (required, string, `copy name 1`) ... Name of the Copy
+    + profile_name (optional, string, `hotels`) ... profile
+
+### View a Copy Detail [GET]
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "name": "copy name 1",
+            "fields": [
+                "Content" : "copy example 1",
+                "Language" : "en",
+                "Comments" : ""  
+            ]
+        }
+
+## Create a new Copy [/copies]
+
+### Create a New Copy [POST]
+
++ Request (application/json)
+
+    + Body
+        
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
+                "name": "copy name 4",
+                "fields": [
+                    "Content" : "copy example 4",
+                    "Language" : "en",
+                    "Comments" : ""  
                 ]
             }
-        ]
+    
++ Response 201
 
-### Create a New Question [POST]
+    + Headers
+            
+            Location: /copies/4
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+## Update/Delete a Copy [/copies/{copy_id}]
+
++ Parameters
+    + copy_id (required, number, `3`) ... Serial Number of Copy
+
+### Update a Copy [PUT]
+
++ Request (application/json)
+
+    + Body
+    
+            {
+                "fields": [
+                    "Content" : "copy example 3 Updated"
+                ]
+            }
+        
++ Response 204
+
+    + Headers
+    
+            Location: /copies/3
+
+### Delete a Copy [DELETE]
+
++ Response 204
+
+## Group Product
+
+Resources related to products in the API.
+
+## Products Metadata [/products/metadata]
+
+### Metadata [GET]
+
++ Response 200 (application/json)
+
+        {
+            "profile":"all",
+            "fields":{
+                "Origin":"String","Convention Centre Location":"PICKLIST","Laundry Room":"BOOLEAN","Entertainment":"BOOLEAN","Geo Longitude":"String","Spa or Jacuzzi":"BOOLEAN",
+                "Country Group":"String","Adults Only":"BOOLEAN","Checkout Time":"String","Child Ages":"String","City Tour":"BOOLEAN","Department":"String","AW Rating Method":"String",
+                "End Location":"String","Cabin":"BOOLEAN","Overnight Tour":"BOOLEAN","Number of Rooms":"String","Product URL":"String","Currency":"String","Shopping Mall":"PICKLIST",
+                "Departure Gateway Name":"String","Club Room Benefits":"String","Parking Cost":"BOOLEAN","Status":"PICKLIST","Snowski":"PICKLIST","GTA ID":"String","Checkin Time":"String",
+                "State URL":"String","Watersports Motorised":"BOOLEAN","Refrigerator":"PICKLIST","Parking Valet":"BOOLEAN","Room Bedding":"String","Complimentary Drink":"BOOLEAN",
+                "Interconnecting Available":"BOOLEAN","Newspaper":"PICKLIST","Independent Couple":"BOOLEAN","Wheelchair Access To Shower":"BOOLEAN","Surveillance Camera":"BOOLEAN",
+                "Number of Disabled Rooms":"Number","Community and Voluntourism":"BOOLEAN","Fare Type":"String","Shower Bath Combination":"BOOLEAN","Nearest Cross Street":"String",
+                "Northstar ID":"String","Conference Centre":"BOOLEAN","Horseback":"PICKLIST","Extra Bed Policy":"String","Microwave":"PICKLIST","Gift Shop or Boutique":"BOOLEAN",
+                "Nightclub":"BOOLEAN","Airport Location":"PICKLIST","Late Checkout":"String",
+                "Parking Light":"BOOLEAN","Region URL":"String","Disabled Parking":"BOOLEAN","Kids Club To Age":"String","Lake Location":"PICKLIST","FC Rating":"String",
+                "Internet Wireless Fee":"BOOLEAN","Elevator to all levels":"BOOLEAN","Telephone in room":"PICKLIST","Parking":"BOOLEAN","Room Size":"String","Mod. Date":"TIMESTAMP",
+                "Uniform Security":"BOOLEAN","Geo Latitude":"String","Air Conditioning":"PICKLIST","Television":"PICKLIST","City Code":"String","Reception Hours":"String","ATM":"BOOLEAN",
+                "Valid To":"String","Crib Rollaway":"BOOLEAN","Flight Number":"String","IH Rating Method":"String","Internet Common":"BOOLEAN","Condo":"BOOLEAN","Distance to Airport":"Number",
+                "Conference Facilities":"BOOLEAN",
+                "Highway Location":"PICKLIST","Swimming Pools Indoor No":"Number","Beach":"PICKLIST","Wheel Chair Access in Hotel":"BOOLEAN","In room safe":"PICKLIST","Minibar":"PICKLIST",
+                "ACCC Signee":"String","QB Rating Method":"String","Room Maximum Capacity":"Number","Internet Cable":"BOOLEAN","Start Location":"String","Golf":"PICKLIST","Sub Region":"String",
+                "Duration":"PICKLIST","ZIP Post Code":"String","Inhouse Movies":"BOOLEAN","Departure Gateway Code":"String","Car Rental Desk":"BOOLEAN","Kitchenette":"PICKLIST","State":"String",
+                "Fitness Centre":"BOOLEAN",
+                "Region":"String","Tennis Court Indoor":"PICKLIST","IH Rating":"PICKLIST","Rail Tour":"BOOLEAN","Boats":"PICKLIST","Corporate":"BOOLEAN","Fishing":"PICKLIST","Country ISO Code 2":"String",
+                "Elevator":"BOOLEAN","Suburb Location":"PICKLIST","Country ISO Code 3":"String","Electric Key":"BOOLEAN","Tennis Court Outdoor":"PICKLIST","Lights for Phone":"BOOLEAN","Escorted Tours":"BOOLEAN","Room Service":"BOOLEAN","Quickbeds ID":"String","Water Ski":"PICKLIST","Adventure":"BOOLEAN","Wheel Chair Ramp in Pool":"BOOLEAN","ACCC Date":"DATE","Family Policy":"String",
+                "Hairdryer":"BOOLEAN","Country URL":"String","Playground":"BOOLEAN","Sub Region Code":"String","Staff Comment":"String","Distance to Shopping":"String","Baby Sitting":"BOOLEAN","GTA Rating Method":"String","City Location":"PICKLIST","Location":"String","Operation Days":"String","Romance and Honeymoon":"BOOLEAN","Coffee Shop":"BOOLEAN","Complimentary Coffee":"BOOLEAN","Suburb":"String","Sauna":"BOOLEAN","Carrier Name":"String","Honeymoon Policy":"String","Laundry in Room":"BOOLEAN","Luggage Service":"BOOLEAN","Weddings":"BOOLEAN","Swimming Pools Outdoor No":"Number",
+                "Tea Coffee Making Facilities":"PICKLIST","Year Built":"String","Internet Common Wireless Fee":"BOOLEAN","Extended Stay":"BOOLEAN","Region Code":"String","Childs Pool":"PICKLIST","Fitness Equipment":"PICKLIST","Parent Sub Region Code":"String","Internet Common Fee":"BOOLEAN","Laundry Service":"BOOLEAN","Safe Deposit Box":"BOOLEAN","Separate Bath":"BOOLEAN","Valid From":"String","Arrival Time":"String","Swim Up Pool Bar":"BOOLEAN","GTA Rating":"PICKLIST","Balcony or Terrace":"PICKLIST","Handrails for Toilet":"BOOLEAN","Cancellation Policy":"String","Children permitted":"BOOLEAN",
+                "Internet Common Wireless":"BOOLEAN","Iron and Ironing Board":"PICKLIST","Sub Region URL":"String","Distance to Beach":"Number","Whirlpool":"PICKLIST","Shower Only":"BOOLEAN","Rural Location":"PICKLIST","Country":"String","Transport":"PICKLIST","Beach Location":"PICKLIST","Fireplace":"PICKLIST","Product ID":"String","Bikes":"PICKLIST","Description":"String","On Sale":"BOOLEAN","Bonus Free Nights":"BOOLEAN","VCR":"PICKLIST","Mountain Location":"PICKLIST","Number of Floors":"String","IH Preferred Hotel":"BOOLEAN","Smoke Alarm":"BOOLEAN","Women Only Floor":"BOOLEAN","BnB":"BOOLEAN",
+                "Small Groups":"BOOLEAN","Year Renovated":"String","QB Rating":"String","Lights for Doorbell":"BOOLEAN","Motel":"BOOLEAN","Educational":"BOOLEAN","Sprinklers":"BOOLEAN","Health Club or Gym":"PICKLIST","Renovations Completed":"String","Jogging":"PICKLIST","Telephone Message":"PICKLIST","Wheelchair Access To Balcony":"BOOLEAN","24 Room Service":"PICKLIST","Family":"BOOLEAN","Street Building Name Number":"String","Suburb Code":"String","Room Type Name":"String","Toppick":"String","Holiday Type":"PICKLIST","Day Spa":"PICKLIST","Reception 24 hours":"BOOLEAN","Suburb URL":"String",
+                "Fodors ID":"String","Swimming Pool Indoor":"PICKLIST","Shower Chair":"BOOLEAN","Local Shuttle Bus":"BOOLEAN","IDD Telephone":"BOOLEAN","Swimming Pool Outdoor":"PICKLIST","All Suite":"BOOLEAN","Internet Cable Fee":"BOOLEAN","Hottub":"PICKLIST","Internet Wireless":"BOOLEAN","Carrier Code":"String","Fan Cooled":"BOOLEAN","Priority":"String","Child Program":"BOOLEAN","Chain Name":"String","City":"String","Active":"BOOLEAN","Product Category":"PICKLIST","Distance to City Centre":"Number","Hotel":"BOOLEAN","Renovations Current":"String","Destination":"String","Relax and Recharge":"BOOLEAN",
+                "User":"String","Resort":"BOOLEAN","Scuba":"PICKLIST","Meetings":"BOOLEAN","Complimentary Transport":"BOOLEAN","Recreation Game Room":"PICKLIST","Inn":"BOOLEAN","Handrails for Shower":"BOOLEAN","AW Rating":"PICKLIST","No of Nights":"Number","Management Company":"String","Multilingual Staff":"BOOLEAN","Local Currency":"String","Product Sub Category":"String","Address4":"String","Snorkeling":"PICKLIST","Adventure World ID":"String","Daily Maid":"PICKLIST","Tour Desk":"BOOLEAN","Departure Time":"String","Childs Menu":"BOOLEAN","Parent Sub Region URL":"String","Non Smoking":"PICKLIST",
+                "Cable TV":"PICKLIST","Comments":"String","Address2":"String","Interconnects to Room":"BOOLEAN","Address3":"String","Tourist Area Location":"PICKLIST","Infinity ID":"String","Vendor":"String","Address1":"String","Beauty or Hair Salon":"BOOLEAN","Kids Club From Age":"String","State Code":"String","All Inclusive":"BOOLEAN","Independent":"BOOLEAN","Bar":"BOOLEAN","Concierge":"BOOLEAN","Casino":"PICKLIST","Sightseeing":"BOOLEAN","Kids Club":"BOOLEAN"
+                }"helperSelections":{
+                "Department":[
+                    "Hotel",
+                    "Nightlife",
+                    "Overviews","Restaurant","Shopping","Sights","TravelTips"],
+                "Vendor":["testHS"]
+            },
+            "pickList":{
+                "Convention Centre Location":["At","In","Near"],
+                "Holiday Type":["Coach","Self Drive","Water - Cruise","Rail","Walk","Cycle","Air","Bus"],
+                "Day Spa":["Near By","On Site"],
+                "Swimming Pool Indoor":["Near By","On Site"],
+                "Highway Location":["At","In","Near"],
+                "Tea Coffee Making Facilities":["All","Some"],
+                "Beach":["Near By","On Site"],
+                "Childs Pool":["Near By","On Site"],
+                "In room safe":["All","Some"],
+                "Fitness Equipment":["All","Some"],
+                "Swimming Pool Outdoor":["Near By","On Site"],
+                "Minibar":["All","Some"],
+                "Shopping Mall":["Near By","On Site"],
+                "Hottub":["Near By","On Site"],
+                "Status":["With copywriter","With FC","With supplier","On hold","Ready"],
+                "Snowski":["Near By","On Site"],
+                "Golf":["Near By","On Site"],
+                "GTA Rating":["1","1.5","2","2.5","3","3.5","4","4.5","5","6","7"],
+                "Balcony or Terrace":["All","Some"],
+                "Refrigerator":["All","Some"],
+                "Duration":["1 Day or less","3 Days","5 Days","7 Days","10 Days","10+ Days","14 Days","21 Days","21+ Days"],
+                "Kitchenette":["All","Some"],
+                "Iron and Ironing Board":["All","Some"],
+                "Newspaper":["All","Some"],
+                "Whirlpool":["All","Some"],
+                "Product Category":["Accommodation","Airline","Activities","Add-On","Air","Aircraft","Airport","Brochure","Car Group","Car Hire","City","Consultant","Country","Cruise","Destination","Entertainment","Insurance","Motorhome","Multi Airport City","Overview","Package","Quote","Rail","Region","Restaurants","Room","Shopping","Sights","Tour","Transfer","Travel Tips"],
+                "Rural Location":["At","In","Near"],
+                "Transport":["Travel Card","Rail","Ferry","Travel Pass","Seat in Coach","Private","Launch"],
+                "Beach Location":["At","In","Near"],
+                "Tennis Court Indoor":["Near By","On Site"],
+                "Fireplace":["All","Some"],
+                "Bikes":["Near By","On Site"],
+                "Pricing Value Indicator":["2","3","4","5"],
+                "IH Rating":["1","1.5","2","2.5","3","3.5","4","4.5","5","6","7"],
+                "Scuba":["Near By","On Site"],
+                "VCR":["All","Some"],
+                "Mountain Location":["At","In","Near"],
+                "Boats":["Near By","On Site"],
+                "Horseback":["Near By","On Site"],
+                "Recreation Game Room":["Near By","On Site"],
+                "Microwave":["All","Some"],
+                "Fishing":["Near By","On Site"],
+                "AW Rating":["1","1.5","2","2.5","3","3.5","4","4.5","5","6","7"],
+                "Airport Location":["At","In","Near"],
+                "Snorkeling":["Near By","On Site"],
+                "Suburb Location":["At","In","Near"],
+                "Tennis Court Outdoor":["Near By","On Site"],
+                "Daily Maid":["All","Some"],
+                "Lake Location":["At","In","Near"],
+                "Water Ski":["Near By","On Site"],"Non Smoking":["All","Some"],"Cable TV":["All","Some"],"Telephone in room":["All","Some"],"Tourist Area Location":["At","In","Near"],"Health Club or Gym":["Near By","On Site"],"Jogging":["Near By","On Site"],"Telephone Message":["All","Some"],"Casino":["Near By","On Site"],"Air Conditioning":["All","Some"],"Television":["All","Some"],"24 Room Service":["Full menu","Limited menu"],"Pricing Type":["Budget","Mid Range","Upscale","Expensive"],"City Location":["At","In","Near"]}}
+
+## Products Collection [/products?limit={limit_num}&offset={offset_num}&profile={profile_name}]
+
++ Parameters
+    + limit_num (optional, number, `10`) ... Maximum number of posts to retrieve
+    + offset_num (optional, number, `0`) ... offset
+    + profile_name (optional, string, `hotels`) ... profile
+
+### List All Products [GET]
+
++ Response 200 (application/json)
+
+    + Headers
+    
+            Link: </products?offset=10>; rel="next"
+            
+    + Body
+    
+            {
+                "length": 10,
+                "offset": 0,
+                "total": 3000,
+                "content": [{
+                    "id": 1,
+                    "name": "Test Product 1",
+                    "fields":[
+                        "Description": "Description",
+                        "Supplier": "Supplier"]
+                    },{
+                    "id": 2,
+                    "name": "Test Product 2",
+                    "fields":[
+                        "Description": "Description",
+                        "Supplier": "Supplier"]
+                    },{
+                    "id": 3,
+                    "name": "Test Product 3",
+                    "fields":[
+                        "Description": "Description",
+                        "Supplier": "Supplier"]
+                    }]
+            }
+
+## Product [/products/{sku_id}]
+
++ Parameters
+    + sku_id (required, number, `1`) ... ID of the Product
+
+### View a Product Detail [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 1,
+            "name": "Test Product 1",
+            "fields":[
+                "Description": "Description",
+                "Supplier": "Supplier"
+            ]
+        }
+
+### Update a Product [PUT]
 
 + Request (application/json)
 
         {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
+        "fields":[
+                "Description": "Description Updated"
+            ]
+        }
+        
++ Response 204
+
+    + Headers
+    
+            Location: /products/3
+            
+### Delete a Product [DELETE]
+
++ Response 204
+
+## Create a Product [/products]
+
+### Create a Product [POST]
+
++ Request (application/json)
+
+        {
+            "name": "Test Product 4",
+            "fields":[
+                "Description": "Description",
+                "Supplier": "Supplier"
+            ]
+        }
+        
++ Response 201
+
+    + Headers
+    
+            Location: /products/4
+
+## Group Product Link
+
+## All Links [/products/{sku_id}/links]
+
++ Parameters
+    + sku_id (required, number) ... ID of the Product
+
+### List All Links [GET]
+
++ Response 200 (application/json)
+
+        {
+            "owner": "Test Product 1",
+            "total": 2,
+            "links": [{
+                "type": "copy",
+                "id": 1,
+                "name": "copy_name_1"
+            }, {
+                "type": "price",
+                "id": 5,
+                "name": "GP-01"
+            }]
+        }
+        
+### Link to Product [POST]
+
++ Request (application/json)
+
+        {
+            "links": [{
+                "type": "copy",
+                "id": 1
+            }, {
+                "type": "price",
+                "id": 5
+            }]
+        }
+        
++ Response 201
+
+    + Headers
+    
+            Location: /products/4/links
+
+### UnLink from Product [DELETE]
+
++ Request (application/json)
+
+        {
+            "links": [{
+                "type": "copy",
+                "id": 1
+            }]
+        }
+        
++ Response 204
+
+    + Headers
+    
+            Location: /products/4/links
+
+## Copy Links [/products/{sku_id}/copies?profile={profile_name}]
+
++ Parameters 
+    + profile_name (optional, string)
+
+### List All linked Copies [GET]
+
++ Response 200 (application/json)
+
+        {
+            "owner": "Test product 1",
+            "total": 2,
+            "copies": [{
+                "id": 1,
+                "name": "copy name 1",
+                "fields": [
+                    "Content" : "copy example 1",
+                    "Language" : "en",
+                    "Comments" : ""  
+                ]
+            }, {
+                "id": 2,
+                "name": "copy name 2",
+                "fields": [
+                    "Content" : "copy example 2",
+                    "Language" : "en",
+                    "Comments" : ""  
+                ]
+            } ]
+        }
+
+### Create and Link a New Copy [POST]
+
++ Request (application/json)
+
+        {
+            "copies": [{
+                "name": "copy name 5",
+                "fields": [
+                    "Content" : "copy example 5",
+                    "Language" : "en",
+                    "Comments" : ""  
+                ]
+            }, {
+                "name": "copy name 6",
+                "fields": [
+                    "Content" : "copy example 6",
+                    "Language" : "en",
+                    "Comments" : ""  
+                ]
+            } ]
+        }
+
++ Response 201 
+
+    + Headers
+    
+            Location:  /products/{sku_id}/copies
+
+### UnLink All Copies [DELETE]
+
++ Response 204
+
+## Group Prices
+
+Resources related to Prices in the API.
+
+## Prices Collection [/prices]
+
+### List All Prices [GET]
+
++ Response 200 (application/json)
+
+        {"total":3074061,"offset":0,"limit":10,"profile":"all","content":[
+        {"id":1,"name":"GT.2A-1806","fields":{"Comments":"","Price":303.00,"Price Format":0,"Price Name":"GT.2A-1806","Mod. Date":1357611825000,"User":"GTA","Travel From Date":"2012-12-31","Type":"DB","Travel To Date":"2012-12-31","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":2,"name":"GT.2A-1807","fields":{"Comments":"","Price":303.00,"Price Format":0,"Price Name":"GT.2A-1807","Mod. Date":1357611825000,"User":"GTA","Travel From Date":"2013-01-01","Type":"DB","Travel To Date":"2013-01-01","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":3,"name":"GT.2A-1808","fields":{"Comments":"","Price":303.00,"Price Format":0,"Price Name":"GT.2A-1808","Mod. Date":1357611825000,"User":"GTA","Travel From Date":"2013-01-02","Type":"DB","Travel To Date":"2013-01-02","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":4,"name":"GT.2A-1809","fields":{"Comments":"","Price":303.00,"Price Format":0,"Price Name":"GT.2A-1809","Mod. Date":1357611825000,"User":"GTA","Travel From Date":"2013-01-03","Type":"DB","Travel To Date":"2013-01-03","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":5,"name":"GT.2A-1810","fields":{"Comments":"","Price":303.00,"Price Format":0,"Price Name":"GT.2A-1810","Mod. Date":1357611825000,"User":"GTA","Travel From Date":"2013-01-04","Type":"DB","Travel To Date":"2013-01-04","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":6,"name":"GT.2A-1811","fields":{"Comments":"","Price":303.00,"Price Format":0,"Price Name":"GT.2A-1811","Mod. Date":1357611825000,"User":"GTA","Travel From Date":"2013-01-05","Type":"DB","Travel To Date":"2013-01-05","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":7,"name":"GT.2A-1812","fields":{"Comments":"","Price":303.00,"Price Format":0,"Price Name":"GT.2A-1812","Mod. Date":1357611825000,"User":"GTA","Travel From Date":"2013-01-06","Type":"DB","Travel To Date":"2013-01-06","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":8,"name":"GT.2A-1813","fields":{"Comments":"","Price":303.00,"Price Format":0,"Price Name":"GT.2A-1813","Mod. Date":1357611825000,"User":"GTA","Travel From Date":"2013-01-07","Type":"DB","Travel To Date":"2013-01-07","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":9,"name":"GT.2A-1814","fields":{"Comments":"","Price":303.00,"Price Format":0,"Price Name":"GT.2A-1814","Mod. Date":1357611825000,"User":"GTA","Travel From Date":"2013-01-08","Type":"DB","Travel To Date":"2013-01-08","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":10,"name":"GT.2A-1815","fields":{"Comments":"","Price":303.00,"Price Format":0,"Price Name":"GT.2A-1815","Mod. Date":1357611825000,"User":"GTA","Travel From Date":"2013-01-09","Type":"DB","Travel To Date":"2013-01-09","Show Prices":true,"Inactive":false,"Validity":""}}]}
+
+## Price [/prices/{id}]
+
++ Parameters
+    + id (required, number, `1`) ... ID of the Price
+
+### View a Price Detail [GET]
+
++ Response 200 (application/json)
+
+        {"id":1,"name":"GT.2A-1806","fields":{"Price Format":0,"Type":"DB","User":"GTA","Mod. Date":1357611825000,"Price Name":"GT.2A-1806","Show Prices":true,"Validity":"","Comments":"","Inactive":false,"Travel To Date":"2012-12-31","Price":303.00,"Travel From Date":"2012-12-31"}}
+
+### Update a Price [PUT]
+
++ Request (application/json)
+
+        { 
+            "fields":{
+                "Comments":"change",
+                "Price":303.00,
+                "Price Format":0,
+                "Price Name":"GT.2A-1806",
+                "Travel From Date":"2012-12-31",
+                "Type":"DB",
+                "Travel To Date":"2012-12-31",
+                "Show Prices":true,
+                "Inactive":false,
+                "Validity":""}
+        }
++ Response 204
+
+    + Headers
+    
+            Location: /prices/2
+
+### Delete a Price [DELETE]
+
++ Response 204
+
+## Create a Price [/prices/product/{id}]
+
++ Parameters
+    + id (required, number, `55`) ... ID of the Price owner (Product ID)
+
+### Create a Price [POST]
+
++ Request (application/json)
+
+        { 
+            "name":"GT.2A-1806",
+            "fields":{
+                "Comments":"",
+                "Price":303.00,
+                "Price Format":0,
+                "Price Name":"GT.2A-1806",
+                "Travel From Date":"2012-12-31",
+                "Type":"DB",
+                "Travel To Date":"2012-12-31",
+                "Show Prices":true,
+                "Inactive":false,
+                "Validity":""}
+        }
+        
++ Response 201
+
+    + Headers
+    
+            Location: /prices/4
+
+
+## Prices by Name [/prices/{name}/name]
+
++ Parameters
+    + name (required, string, `GT.2A-1806`) ... name of the Price
+
+### List Prices [GET]
+
++ Response 200 (application/json)
+
+        {"total":4700,"offset":0,"limit":10,"profile":"all","content":[
+        {"id":1,"name":"GT.2A-1806","fields":{"Comments":"","Price":303.00,"Price Format":0,"Price Name":"GT.2A-1806","Mod. Date":1357611825000,"User":"GTA","Travel From Date":"2012-12-31","Type":"DB","Travel To Date":"2012-12-31","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":93,"name":"GT.2A-1806","fields":{"Comments":"","Price":196.00,"Price Format":0,"Price Name":"GT.2A-1806","Mod. Date":1357611826000,"User":"GTA","Travel From Date":"2012-12-31","Type":"DB","Travel To Date":"2012-12-31","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":163,"name":"GT.2A-1806","fields":{"Comments":"","Price":286.00,"Price Format":0,"Price Name":"GT.2A-1806","Mod. Date":1357611826000,"User":"GTA","Travel From Date":"2012-12-31","Type":"DB","Travel To Date":"2012-12-31","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":313,"name":"GT.2A-1806","fields":{"Comments":"","Price":167.00,"Price Format":0,"Price Name":"GT.2A-1806","Mod. Date":1357611827000,"User":"GTA","Travel From Date":"2012-12-31","Type":"DB","Travel To Date":"2012-12-31","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":433,"name":"GT.2A-1806","fields":{"Comments":"","Price":124.50,"Price Format":0,"Price Name":"GT.2A-1806","Mod. Date":1357611827000,"User":"GTA","Travel From Date":"2012-12-31","Type":"SB","Travel To Date":"2012-12-31","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":524,"name":"GT.2A-1806","fields":{"Comments":"","Price":382.00,"Price Format":0,"Price Name":"GT.2A-1806","Mod. Date":1357611828000,"User":"GTA","Travel From Date":"2012-12-31","Type":"DB","Travel To Date":"2012-12-31","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":637,"name":"GT.2A-1806","fields":{"Comments":"","Price":130.50,"Price Format":0,"Price Name":"GT.2A-1806","Mod. Date":1357611828000,"User":"GTA","Travel From Date":"2012-12-31","Type":"SB","Travel To Date":"2012-12-31","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":718,"name":"GT.2A-1806","fields":{"Comments":"","Price":122.00,"Price Format":0,"Price Name":"GT.2A-1806","Mod. Date":1357611829000,"User":"GTA","Travel From Date":"2012-12-31","Type":"SB","Travel To Date":"2012-12-31","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":809,"name":"GT.2A-1806","fields":{"Comments":"","Price":130.00,"Price Format":0,"Price Name":"GT.2A-1806","Mod. Date":1357611829000,"User":"GTA","Travel From Date":"2012-12-31","Type":"DB","Travel To Date":"2012-12-31","Show Prices":true,"Inactive":false,"Validity":""}},
+        {"id":895,"name":"GT.2A-1806","fields":{"Comments":"","Price":179.00,"Price Format":0,"Price Name":"GT.2A-1806","Mod. Date":1357611829000,"User":"GTA","Travel From Date":"2012-12-31","Type":"DB","Travel To Date":"2012-12-31","Show Prices":true,"Inactive":false,"Validity":""}}
+        ]}
+
+## Group Pictures
+Resources related to pictures in the API.
+
+## Pictures Collection [/pictures]
+
+### List All Pictures [GET]
+
++ Response 200 (application/json)
+
+        {"total":44641,"offset":0,"limit":10,"profile":"all","content":[
+        {"id":3,"name":"4826576-2400x1618.jpg","fields":{"Comments":"Importer","File Name":"4826576-2400x1618.jpg","Low Res. Path":":ao:ImageImportV:upload_dir:4826576-2400x1618.jpg","Status":"Unlinked","Image Name":"4826576-2400x1618.jpg","Mod. Date":1360630240000,"Target Channel":"All","Royalty":"Free","Image Category":"Destination","Image Supplier":"In-house","Image Size":"","Image Height":"","Image Width":"","Caption":"","Copyright":""}},
+        {"id":6867,"name":"ZB743_213181_2820_Hero.jpg","fields":{"Comments":"DLP4","File Name":"ZB743_213181_2820_Hero.jpg","Low Res. Path":"internal","Status":"Unlinked","Image Name":"ZB743_213181_2820_Hero","Mod. Date":1360631716000,"Target Channel":"All","Royalty":"Free","Image Category":"Destination","Image Supplier":"In-house","Image Size":"","Image Height":"","Image Width":"","Caption":"","Copyright":""}},
+        {"id":6868,"name":"ZB743_213181_2820_Filler.jpg","fields":{"Comments":"DLP4","File Name":"ZB743_213181_2820_Filler.jpg","Low Res. Path":"internal","Status":"Unlinked","Image Name":"ZB743_213181_2820_Filler","Mod. Date":1360631716000,"Target Channel":"All","Royalty":"Free","Image Category":"Destination","Image Supplier":"In-house","Image Size":"","Image Height":"","Image Width":"","Caption":"","Copyright":""}},
+        {"id":6869,"name":"B1120_120893_000741_Hero.jpg","fields":{"Comments":"DLP4","File Name":"B1120_120893_000741_Hero.jpg","Low Res. Path":"internal","Status":"Unlinked","Image Name":"B1120_120893_000741_Hero","Mod. Date":1360631716000,"Target Channel":"All","Royalty":"Free","Image Category":"Destination","Image Supplier":"In-house","Image Size":"","Image Height":"","Image Width":"","Caption":"","Copyright":""}},
+        {"id":6870,"name":"B1120_120893_000741_Filler.jpg","fields":{"Comments":"DLP4","File Name":"B1120_120893_000741_Filler.jpg","Low Res. Path":"internal","Status":"Unlinked","Image Name":"B1120_120893_000741_Filler","Mod. Date":1360631716000,"Target Channel":"All","Royalty":"Free","Image Category":"Destination","Image Supplier":"In-house","Image Size":"","Image Height":"","Image Width":"","Caption":"","Copyright":""}},
+        {"id":6871,"name":"ZB5003_190434_0008_Hero.jpg","fields":{"Comments":"DLP4","File Name":"ZB5003_190434_0008_Hero.jpg","Low Res. Path":"internal","Status":"Unlinked","Image Name":"ZB5003_190434_0008_Hero","Mod. Date":1360631716000,"Target Channel":"All","Royalty":"Free","Image Category":"Destination","Image Supplier":"In-house","Image Size":"","Image Height":"","Image Width":"","Caption":"","Copyright":""}},
+        {"id":6872,"name":"ZB5003_190434_0008_Filler.jpg","fields":{"Comments":"DLP4","File Name":"ZB5003_190434_0008_Filler.jpg","Low Res. Path":"internal","Status":"Unlinked","Image Name":"ZB5003_190434_0008_Filler","Mod. Date":1360631716000,"Target Channel":"All","Royalty":"Free","Image Category":"Destination","Image Supplier":"In-house","Image Size":"","Image Height":"","Image Width":"","Caption":"","Copyright":""}},
+        {"id":6873,"name":"B1337_158732_0010_Hero.jpg","fields":{"Comments":"DLP4","File Name":"B1337_158732_0010_Hero.jpg","Low Res. Path":"internal","Status":"Unlinked","Image Name":"B1337_158732_0010_Hero","Mod. Date":1360631716000,"Target Channel":"All","Royalty":"Free","Image Category":"Destination","Image Supplier":"In-house","Image Size":"","Image Height":"","Image Width":"","Caption":"","Copyright":""}},
+        {"id":6874,"name":"B1337_158732_0010_Filler.jpg","fields":{"Comments":"DLP4","File Name":"B1337_158732_0010_Filler.jpg","Low Res. Path":"internal","Status":"Unlinked","Image Name":"B1337_158732_0010_Filler","Mod. Date":1360631716000,"Target Channel":"All","Royalty":"Free","Image Category":"Destination","Image Supplier":"In-house","Image Size":"","Image Height":"","Image Width":"","Caption":"","Copyright":""}},
+        {"id":6875,"name":"ZB743_213181_1752_Hero.jpg","fields":{"Comments":"DLP4","File Name":"ZB743_213181_1752_Hero.jpg","Low Res. Path":"internal","Status":"Unlinked","Image Name":"ZB743_213181_1752_Hero","Mod. Date":1360631716000,"Target Channel":"All","Royalty":"Free","Image Category":"Destination","Image Supplier":"In-house","Image Size":"","Image Height":"","Image Width":"","Caption":"","Copyright":""}}]}
+
+### Create a New Picture [POST]
+
++ Request (application/json)
+
+        {
+            "name":"ZB743_213181_2820_Hero.jpg",
+            "fields":{
+                "Comments":"DLP4",
+                "File Name":"ZB743_213181_2820_Hero.jpg",
+                "Low Res. Path":"internal",
+                "Status":"Unlinked",
+                "Image Name":"ZB743_213181_2820_Hero",
+                "Target Channel":"All",
+                "Royalty":"Free",
+                "Image Category":"Destination",
+                "Image Supplier":"In-house",
+                "Image Size":"",
+                "Image Height":"",
+                "Image Width":"",
+                "Caption":"",
+                "Copyright":""}
+        }
+
++ Response 201
+
+    + Headers
+    
+            Location: /pictures/6867
+
+## Picture [/pictures/{id}]
+
++ Parameters
+    + id (required, number,`6867`) ... ID of the picture
+
+### View a Picture Detail [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id":6867,
+            "name":"ZB743_213181_2820_Hero.jpg",
+            "fields":{
+                "Comments":"DLP4",
+                "File Name":"ZB743_213181_2820_Hero.jpg",
+                "Low Res. Path":"internal",
+                "Status":"Unlinked",
+                "Image Name":"ZB743_213181_2820_Hero",
+                "Mod. Date":1360631716000,
+                "Target Channel":"All",
+                "Royalty":"Free",
+                "Image Category":"Destination",
+                "Image Supplier":"In-house",
+                "Image Size":"",
+                "Image Height":"",
+                "Image Width":"",
+                "Caption":"",
+                "Copyright":""}
+        }
+
+### Update a Picture [PUT]
+
++ Request (application/json)
+
+        {
+            "fields":{
+                "Comments":"DLP4",
+                "Status":"Unlinked",
+                "Target Channel":"All",
+                "Royalty":"Free",
+                "Image Category":"Destination",
+                "Image Supplier":"In-house",
+                "Image Size":"",
+                "Image Height":"",
+                "Image Width":"",
+                "Caption":"",
+                "Copyright":""}
+        }
++ Response 204
+
+    + Headers
+    
+            Location: /pictures/6867
+
+### Delete a Picture [DELETE]
+
++ Response 204 
+
+## Move Picture [/pictures/move?from={from}&to={to}&op={op}]
+
++ Parameters
+    + from (required, string) ... absolute path to source file
+    + to (required, string) ... absolute path to new file
+    + op (required, number) ... option flag to specify special move caseses:
+        op=0; add increment number in file name, if destination file already exists
+        op=1; overwrite (delete destination file and it's generated folders)
+        op=2; cancel move operation, if destination file already exists
+
+### Move Picture [GET]
++ Response 200
+
+## Group Movies
+Resources related to movies in the API.
+
+## Movies [/movies]
+
+### List All Movies [GET]
+
++ Response 200 (application/json)
+
+        {
+            "total":1,
+            "offset":0,
+            "limit":10,
+            "profile":"all",
+            "content":[
+            {
+                "id":1, 
+                "name": "test", 
+                "fields":{"Status":0,
+                    "Comments":"",
+                    "Movie Name":"Test.mov",
+                    "Low Res. Path":"/content/Test.mov"
+                }
+            }]
+        }
+
+## Move Movies [/movies/move?from={from}&to={to}&op={op}]
+
++ Parameters
+    + from (required, string) ... absolute path to source file
+    + to (required, string) ... absolute path to new file
+    + op (required, number) ... option flag to specify special move caseses:
+        op=0; add increment number in file name, if destination file already exists
+        op=1; overwrite (delete destination file and it's generated folders)
+        op=2; cancel move operation, if destination file already exists
+
+### Move Movies [GET]
++ Response 200
+
+## Group Editions
+Resources related to editions in the API.
+
+## Editions [/editions]
+
+### List All Editions [GET]
+
++ Response 200 (application/json)
+
+        {
+            "total":30,
+            "offset":0,
+            "limit":10,
+            "profile":"all",
+            "content":[
+                {"id":2,"name":"IH.Europe Essentials 2013-14","fields":{"Comments":"","Edition ID":"IH.Europe Essentials 2013-14","Publication Name":"Brochure","Mod. Date":"2013-05-21","No. of Pages":100,"Starting Page":1,"Edition Status":"History","Edition Prefix":"IH."}},
+                {"id":4,"name":"IH.Europe Essentials 2013-14-AO","fields":{"Comments":"","Edition ID":"IH.Europe Essentials 2013-14-AO","Publication Name":"Brochure","Mod. Date":"2013-05-22","No. of Pages":100,"Starting Page":1,"Edition Status":"History","Edition Prefix":"IH."}},
+                {"id":5,"name":"IH.Hawaii 2013-14","fields":{"Comments":"","Edition ID":"IH.Hawaii 2013-14","Publication Name":"Brochure","Mod. Date":"2013-05-27","No. of Pages":50,"Starting Page":1,"Edition Status":"Current","Edition Prefix":"IH."}},
+                {"id":6,"name":"IH.Hawaii 2013-14-AO","fields":{"Comments":"","Edition ID":"IH.Hawaii 2013-14-AO","Publication Name":"Brochure","Mod. Date":"2013-05-27","No. of Pages":46,"Starting Page":1,"Edition Status":"Current","Edition Prefix":"IH."}},
+                {"id":7,"name":"IH.South Pacific 2013-14","fields":{"Comments":"","Edition ID":"IH.South Pacific 2013-14","Publication Name":"Brochure","Mod. Date":"2013-05-27","No. of Pages":90,"Starting Page":1,"Edition Status":"Current","Edition Prefix":"IH."}},
+                {"id":11,"name":"IH.Northern Territory 2013-14","fields":{"Comments":"","Edition ID":"IH.Northern Territory 2013-14","Publication Name":"Brochure","Mod. Date":"2013-07-17","No. of Pages":46,"Starting Page":1,"Edition Status":"History","Edition Prefix":"IH."}},
+                {"id":12,"name":"IH.Northern Territory 2013-14-AO","fields":{"Comments":"","Edition ID":"IH.Northern Territory 2013-14-AO","Publication Name":"Brochure","Mod. Date":"2013-07-17","No. of Pages":46,"Starting Page":1,"Edition Status":"History","Edition Prefix":"IH."}},
+                {"id":16,"name":"IH.Japan South Korea 2013-14","fields":{"Comments":"","Edition ID":"IH.Japan South Korea 2013-14","Publication Name":"Brochure","Mod. Date":"2013-07-22","No. of Pages":26,"Starting Page":1,"Edition Status":"Current","Edition Prefix":"IH."}},
+                {"id":17,"name":"IH.Japan South Korea 2013-14-AO","fields":{"Comments":"","Edition ID":"IH.Japan South Korea 2013-14-AO","Publication Name":"Brochure","Mod. Date":"2013-07-22","No. of Pages":26,"Starting Page":1,"Edition Status":"Current","Edition Prefix":"IH."}},
+                {"id":18,"name":"IH.New South Wales 2013-14","fields":{"Comments":"","Edition ID":"IH.New South Wales 2013-14","Publication Name":"Brochure","Mod. Date":"2013-07-23","No. of Pages":50,"Starting Page":1,"Edition Status":"Current","Edition Prefix":"IH."}}
             ]
         }
 
-+ Response 201 (application/json)
 
-    + Headers
+## Editions Pages [/editions/{id}/pages]
 
-            Location: /questions/2
++ Parameters
+    + id (required, number, `2`) ... id of Editions
 
-    + Body
+### List All Editions Pages [GET]
 
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
++ Response 200 (application/json)
+
+        {
+            "total":100,
+            "offset":0,
+            "limit":10,
+            "profile":"all",
+            "content":[
+                {"id":13,"name":"Contents","fields":{"Page No.":1,"Comments":"Contents + image","File Name":"Edit2Pg13","Page Name":"Contents","Status":"Pagination","Page Open By":"","Page Header 1":"","Page Header 2":"","Page Footer":"","Page Section":""}},
+                {"id":14,"name":"Europe Essentials","fields":{"Page No.":2,"Comments":"Image, Editorial - Destination Copy","File Name":"Edit2Pg13","Page Name":"Europe Essentials","Status":"Pagination","Page Open By":"","Page Header 1":"","Page Header 2":"","Page Footer":"","Page Section":""}},
+                {"id":15,"name":"Holiday Suggestions","fields":{"Page No.":3,"Comments":"Grecian delights","File Name":"Edit2Pg13","Page Name":"Holiday Suggestions","Status":"Pagination","Page Open By":"","Page Header 1":"","Page Header 2":"","Page Footer":"","Page Section":""}},
+                {"id":16,"name":"Flying there","fields":{"Page No.":4,"Comments":"Singapore Stop-over","File Name":"Edit2Pg13","Page Name":"Flying there","Status":"Pagination","Page Open By":"","Page Header 1":"","Page Header 2":"","Page Footer":"","Page Section":""}},
+                {"id":17,"name":"Cruising","fields":{"Page No.":5,"Comments":"Carnival Legend Ã Baltic Wonders & St Petersburg","File Name":"Edit2Pg17","Page Name":"Cruising","Status":"Pagination","Page Open By":"","Page Header 1":"","Page Header 2":"","Page Footer":"","Page Section":""}},
+                {"id":18,"name":"Cruising","fields":{"Page No.":6,"Comments":"Celebrity Silhouette Ã Adriatic Cruise","File Name":"Edit2Pg17","Page Name":"Cruising","Status":"Pagination","Page Open By":"","Page Header 1":"","Page Header 2":"","Page Footer":"","Page Section":""}},
+                {"id":19,"name":"Cruising","fields":{"Page No.":7,"Comments":"Norwegian Jade Ã Eastern Mediterranean Cruise ","File Name":"Edit2Pg17","Page Name":"Cruising","Status":"Pagination","Page Open By":"","Page Header 1":"","Page Header 2":"","Page Footer":"","Page Section":""}},
+                {"id":20,"name":"Cruising","fields":{"Page No.":8,"Comments":"ms Nieuw Amsterdam Ã Magic of the Mediterranean","File Name":"Edit2Pg17","Page Name":"Cruising","Status":"Pagination","Page Open By":"","Page Header 1":"","Page Header 2":"","Page Footer":"","Page Section":""}},
+                {"id":21,"name":"Car Hire","fields":{"Page No.":9,"Comments":"Hertz","File Name":"Edit2Pg17","Page Name":"Car Hire","Status":"Pagination","Page Open By":"","Page Header 1":"","Page Header 2":"","Page Footer":"","Page Section":""}},
+                {"id":22,"name":"Rail","fields":{"Page No.":10,"Comments":"Eurail","File Name":"Edit2Pg17","Page Name":"Rail","Status":"Pagination","Page Open By":"","Page Header 1":"","Page Header 2":"","Page Footer":"","Page Section":""}}
                 ]
+        }
+
+## Group Documents
+Resources related to documents in the API.
+
+## Move document [/documents/move?from={from}&to={to}&op={op}]
+
++ Parameters
+    + from (required, string) 
+    + to (required, string)
+    + op (required, number)
+
+### Move document [GET]
++ Response 200
+
+## Group CEG to Core 
+Allowing import many products to AO Core System
+## Import products [/c2c/products]
+
+### Import [POST]
+
++ Request (application/json)
+
+        {
+            "products": [{
+                "product": {
+                    "aoidCode" : "AA000001",
+                    "fields" : {
+                        "ID" : "18447",
+                        "ShipID" : 1,
+                        "ShipName" : "Explorer Of The Seas (ShipName)",
+                        "Language" : "en",
+                        "Gross Tonnage" : "138,000",
+                        "Length" : "1,025 ft",
+                        "Draft" : "29 ft",
+                        "Cruising Speed" : "22 knots",
+                        "Occupancy" : "3,114 double occupancy, 3,807 maximum",
+                        "Max Beam" : "157.5 feet",
+                        "Electric Current" : "110/220 VAC/1500 watts",
+                        "Ship's Registry" : "Bahamas  (note Registry seems to be the same)",
+                        "Entered Service" : "November 18, 2001",
+                        "Last Refurbished" : "April,  2009",
+                        "Rock-climbing wall" : true,
+                        "Ice-skating rink" : true,
+                        "Mini-golf course" : true,
+                        "Basketball court" : true,
+                        "Jogging and In-line skating tracks" : true,
+                        "In-line skating track" : true,
+                        "Golf simulator" : "",
+                        "Officers" : "Italian",
+                        "Crew" : "International"
+                    },
+                    "skuLinkRules" : {
+                        "anchorLinkRules" : [12, 72, 14, 989],
+                        "parentChildLinkRules" : [30, 24, 67, 4574]
+                    }
+                },
+                "copy":[{
+                    "chainPosition" : 0,
+                    "name": "Ship Facts",
+                    "fields" : {
+                        "Title" : "Ship Facts",
+                        "Content" : "<ul>\n<li><b>Gross Tonnage:</b> 138,000</li>\n<li><b>Length:</b> 1,025 ft</li>\n<li><b>Max Beam:</b> 157.5 ft</li>\n<li><b>Draft:</b> 29 ft</li>\n<li><b>Cruising Speed:</b> 22 knots</li>\n</ul>",
+                        "Language" : "en",
+                        "Format" : "bold, italic",
+                        "Styled" : "html",
+                        "Comments" : "",
+                        "Category" : "",
+                        "Type" : 0
+                    }
+                }],
+                "prices":[{
+                    "name":"test.price",
+                    "fields":{
+                        "Price":"10.50"
+                    }
+                }],
+                "pictures":[{
+                    "name":"test-image.jpg",
+                    "fields":{
+                        "Language":"English"
+                    }
+                }],
+                "logos":[],
+                "movies":[],
+                "sounds":[]
+            }],
+            "defaultRules":{
+                "skuRules":{
+                    "objectRules":[],
+                    "fieldRules":[],
+                    "objectTargetAction":"compare",
+                    "anchorActionOnChange":"flag",
+                    "comparePriorityLevel":5,
+                    "embargoDate":"11/03/2015",
+                    "embargoTime":"11:00:00",
+                    "dataSource":"GTA"
+                },
+                "copyRules":{
+                    "objectRules":[{
+                        "name":"test-copy_name",
+                        "objectTargetAction":"live",
+                        "anchorActionOnChange":"flag",
+                        "anchorLinkRules":[1,2,6]
+                    }],
+                    "fieldRules":[] 
+                },
+                "priceRules":{
+                    "objectRules":[],
+                    "fieldRules":[],
+                    "objectTargetAction":"compare"
+                },
+                "pictureRules":{
+                    "objectRules":[],
+                    "fieldRules":[],
+                    "objectTargetAction":"compare"
+                },
+                "logoRules":{},
+                "movieRules":{},
+                "soundRules":{}
             }
+        }
+        
+
++ Response 200 (application/json)
+
+        {
+            "AA00001": "OK"
+        }
+
+## Group Comparison products and copies
+
+## Comparison new [/comparison]
+
+### Comparison [GET]
+
++ Response 200 (application/json)
+
+        {
+            "total":7414,"offset":0,"limit":10,"profile":"all",
+            "content":[
+                {   
+                    "id":33864,
+                    "productId":"AD-ALV-6639919",
+                    "description":"Montane",
+                    "productType":"Accommodation",
+                    "modDate":null,
+                    "copies":[
+                    {"id":456598,"name":"it-HB-Description","modDate":null,"supplier":"HB","language":"Italian","fields":[{"id":40,"sid":"Copy_Text","columnName":"Copy Text","originalValue":"Located in the heart of the village of Arinsal in front of the gondola, Vallnord Bike Park and near the mountain roads.<AORET/>","newValue":"Located in the heart of the village of Arinsal in front of the gondola, Vallnord Bike Park and near the mountain roads.||Ulteriori informazioni saranno disponibili prossimamente.\n"},{"id":1400,"sid":"Language","columnName":"Language","originalValue":"Italian","newValue":"English"}]},
+                    {"id":175745,"name":"en-HB-Description","modDate":null,"supplier":"HB","language":"English","fields":[{"id":40,"sid":"Copy_Text","columnName":"Copy Text","originalValue":"This hotel is located in the heart of the village of Arinsal in front of the gondola lift and Vallnord Bike Park, and near the mountain roads. The nearest links to the public transport network are right on the hotel's doorstep and guests will find the closest restaurants, bars, nightspots and shops just 50 m away. Andorra La Vella is 9 km away.\nThis charming mountain hotel offers guests direct access to the cable car which rises up to the Vallnord ski resort, making it the ideal Pyrenees slope. Renovated in 2009, this ski resort hotel comprises a total of 27 rooms and is built in the typical stone and wood style of a mountain lodge. During the winter season guests will appreciate facilities such as ski lockers, and in summer they can explore the wonderful green landscape which surrounds the village. Visitors can finish the day with a relaxing drink in the welcoming bar or enjoy a meal in the on-site restaurant. Further facilities on offer to guests include a lobby area with a 24-hour reception and check-out service, a hotel safe and lift access. Guests have Internet access at their disposal and they can also take advantage of the room service. Parking is available for those arriving by car.\n","newValue":"This hotel is located in the heart of the village of Arinsal in front of the gondola lift and Vallnord Bike Park, and near the mountain roads. The nearest links to the public transport network are right on the hotel's doorstep and guests will find the closest restaurants, bars, nightspots and shops just 50 m away. Andorra La Vella is 9 km away.\n\nThis charming mountain hotel offers guests direct access to the cable car which rises up to the Vallnord ski resort, making it the ideal Pyrenees slope. Renovated in 2009, this ski resort hotel comprises a total of 27 rooms and is built in the typical stone and wood style of a mountain lodge. During the winter season guests will appreciate facilities such as ski lockers, and in summer they can explore the wonderful green landscape which surrounds the village. Visitors can finish the day with a relaxing drink in the welcoming bar or enjoy a meal in the on-site restaurant. Further facilities on offer to guests include a lobby area with a 24-hour reception and check-out service, a hotel safe and lift access. Guests have Internet access at their disposal and they can also take advantage of the room service. Parking is available for those arriving by car.\n\nAll standard rooms enjoy mountain views. They come with a private bathroom with a hairdryer and offer 2 single beds. They are equipped with a telephone, a TV, Internet access, a safe and centrally regulated heating.\n"}]}],
+                    "fields":[{"id":401,"sid":"U_Telephone","columnName":"Telephone","originalValue":"00376639919","newValue":"00376737535"},{"id":1466,"sid":"U_Property_Type_2","columnName":"Property Type 2","originalValue":"-","newValue":"No"},{"id":1465,"sid":"U_Property_Type_1","columnName":"Property Type 1","originalValue":"-","newValue":"No"},{"id":1467,"sid":"U_Property_Type_3","columnName":"Property Type 3","originalValue":"-","newValue":"No"},{"id":1463,"sid":"U_All_Inclusive","columnName":"All inclusive","originalValue":"-","newValue":"No"},{"id":1462,"sid":"U_Self_Catering","columnName":"Self catering","originalValue":"-","newValue":"No"},{"id":393,"sid":"U_Export_Status","columnName":"Export Status","originalValue":"Sent","newValue":"Not Ready"},{"id":1464,"sid":"U_Family_Friendly","columnName":"Family Friendly","originalValue":"-","newValue":"No"}]
+                    } 
+                ]
+        }
+## Comparison old content [/comparison/old]
+
+### Old Comparison [GET]
+
++ Response 200 (application/json)
+
+        {
+            "total":7414,"offset":0,"limit":10,"profile":"all",
+            "content":[
+                {   
+                    "id":33864,
+                    "productId":"AD-ALV-6639919",
+                    "description":"Montane",
+                    "productType":"Accommodation",
+                    "modDate":null,
+                    "copies":[
+                    {"id":456598,"name":"it-HB-Description","modDate":null,"supplier":"HB","language":"Italian","fields":[{"id":40,"sid":"Copy_Text","columnName":"Copy Text","originalValue":"Located in the heart of the village of Arinsal in front of the gondola, Vallnord Bike Park and near the mountain roads.<AORET/>","newValue":"Located in the heart of the village of Arinsal in front of the gondola, Vallnord Bike Park and near the mountain roads.||Ulteriori informazioni saranno disponibili prossimamente.\n"},{"id":1400,"sid":"Language","columnName":"Language","originalValue":"Italian","newValue":"English"}]},
+                    {"id":175745,"name":"en-HB-Description","modDate":null,"supplier":"HB","language":"English","fields":[{"id":40,"sid":"Copy_Text","columnName":"Copy Text","originalValue":"This hotel is located in the heart of the village of Arinsal in front of the gondola lift and Vallnord Bike Park, and near the mountain roads. The nearest links to the public transport network are right on the hotel's doorstep and guests will find the closest restaurants, bars, nightspots and shops just 50 m away. Andorra La Vella is 9 km away.\nThis charming mountain hotel offers guests direct access to the cable car which rises up to the Vallnord ski resort, making it the ideal Pyrenees slope. Renovated in 2009, this ski resort hotel comprises a total of 27 rooms and is built in the typical stone and wood style of a mountain lodge. During the winter season guests will appreciate facilities such as ski lockers, and in summer they can explore the wonderful green landscape which surrounds the village. Visitors can finish the day with a relaxing drink in the welcoming bar or enjoy a meal in the on-site restaurant. Further facilities on offer to guests include a lobby area with a 24-hour reception and check-out service, a hotel safe and lift access. Guests have Internet access at their disposal and they can also take advantage of the room service. Parking is available for those arriving by car.\n","newValue":"This hotel is located in the heart of the village of Arinsal in front of the gondola lift and Vallnord Bike Park, and near the mountain roads. The nearest links to the public transport network are right on the hotel's doorstep and guests will find the closest restaurants, bars, nightspots and shops just 50 m away. Andorra La Vella is 9 km away.\n\nThis charming mountain hotel offers guests direct access to the cable car which rises up to the Vallnord ski resort, making it the ideal Pyrenees slope. Renovated in 2009, this ski resort hotel comprises a total of 27 rooms and is built in the typical stone and wood style of a mountain lodge. During the winter season guests will appreciate facilities such as ski lockers, and in summer they can explore the wonderful green landscape which surrounds the village. Visitors can finish the day with a relaxing drink in the welcoming bar or enjoy a meal in the on-site restaurant. Further facilities on offer to guests include a lobby area with a 24-hour reception and check-out service, a hotel safe and lift access. Guests have Internet access at their disposal and they can also take advantage of the room service. Parking is available for those arriving by car.\n\nAll standard rooms enjoy mountain views. They come with a private bathroom with a hairdryer and offer 2 single beds. They are equipped with a telephone, a TV, Internet access, a safe and centrally regulated heating.\n"}]}],
+                    "fields":[{"id":401,"sid":"U_Telephone","columnName":"Telephone","originalValue":"00376639919","newValue":"00376737535"},{"id":1466,"sid":"U_Property_Type_2","columnName":"Property Type 2","originalValue":"-","newValue":"No"},{"id":1465,"sid":"U_Property_Type_1","columnName":"Property Type 1","originalValue":"-","newValue":"No"},{"id":1467,"sid":"U_Property_Type_3","columnName":"Property Type 3","originalValue":"-","newValue":"No"},{"id":1463,"sid":"U_All_Inclusive","columnName":"All inclusive","originalValue":"-","newValue":"No"},{"id":1462,"sid":"U_Self_Catering","columnName":"Self catering","originalValue":"-","newValue":"No"},{"id":393,"sid":"U_Export_Status","columnName":"Export Status","originalValue":"Sent","newValue":"Not Ready"},{"id":1464,"sid":"U_Family_Friendly","columnName":"Family Friendly","originalValue":"-","newValue":"No"}]
+                    } 
+                ]
+        }
+## Search by products [/comparison/search?limit={limit_num}&offset={offset_num}&profile={profile_name}]
+
++ Parameters
+    + limit_num (optional, number, `10`) ... Maximum number of posts to retrieve
+    + offset_num (optional, number, `0`) ... offset
+    + profile_name (optional, string, `hotels`) ... profile
+    
+
+### Search Comparison [POST]
+
+
++ Request (application/json)
+        
+        { 
+            "selectedField":"SKU_Num",
+            "selectedOperator":"ISNT_EMPTY",
+            "selectedValue":""
+        }
+
++ Response 200 (application/json)
+
+        {
+            "total":7414,"offset":0,"limit":10,"profile":"all",
+            "content":[
+                {   
+                    "id":33864,
+                    "productId":"AD-ALV-6639919",
+                    "description":"Montane",
+                    "productType":"Accommodation",
+                    "modDate":null,
+                    "copies":[
+                    {"id":456598,"name":"it-HB-Description","modDate":null,"supplier":"HB","language":"Italian","fields":[{"id":40,"sid":"Copy_Text","columnName":"Copy Text","originalValue":"Located in the heart of the village of Arinsal in front of the gondola, Vallnord Bike Park and near the mountain roads.<AORET/>","newValue":"Located in the heart of the village of Arinsal in front of the gondola, Vallnord Bike Park and near the mountain roads.||Ulteriori informazioni saranno disponibili prossimamente.\n"},{"id":1400,"sid":"Language","columnName":"Language","originalValue":"Italian","newValue":"English"}]},
+                    {"id":175745,"name":"en-HB-Description","modDate":null,"supplier":"HB","language":"English","fields":[{"id":40,"sid":"Copy_Text","columnName":"Copy Text","originalValue":"This hotel is located in the heart of the village of Arinsal in front of the gondola lift and Vallnord Bike Park, and near the mountain roads. The nearest links to the public transport network are right on the hotel's doorstep and guests will find the closest restaurants, bars, nightspots and shops just 50 m away. Andorra La Vella is 9 km away.\nThis charming mountain hotel offers guests direct access to the cable car which rises up to the Vallnord ski resort, making it the ideal Pyrenees slope. Renovated in 2009, this ski resort hotel comprises a total of 27 rooms and is built in the typical stone and wood style of a mountain lodge. During the winter season guests will appreciate facilities such as ski lockers, and in summer they can explore the wonderful green landscape which surrounds the village. Visitors can finish the day with a relaxing drink in the welcoming bar or enjoy a meal in the on-site restaurant. Further facilities on offer to guests include a lobby area with a 24-hour reception and check-out service, a hotel safe and lift access. Guests have Internet access at their disposal and they can also take advantage of the room service. Parking is available for those arriving by car.\n","newValue":"This hotel is located in the heart of the village of Arinsal in front of the gondola lift and Vallnord Bike Park, and near the mountain roads. The nearest links to the public transport network are right on the hotel's doorstep and guests will find the closest restaurants, bars, nightspots and shops just 50 m away. Andorra La Vella is 9 km away.\n\nThis charming mountain hotel offers guests direct access to the cable car which rises up to the Vallnord ski resort, making it the ideal Pyrenees slope. Renovated in 2009, this ski resort hotel comprises a total of 27 rooms and is built in the typical stone and wood style of a mountain lodge. During the winter season guests will appreciate facilities such as ski lockers, and in summer they can explore the wonderful green landscape which surrounds the village. Visitors can finish the day with a relaxing drink in the welcoming bar or enjoy a meal in the on-site restaurant. Further facilities on offer to guests include a lobby area with a 24-hour reception and check-out service, a hotel safe and lift access. Guests have Internet access at their disposal and they can also take advantage of the room service. Parking is available for those arriving by car.\n\nAll standard rooms enjoy mountain views. They come with a private bathroom with a hairdryer and offer 2 single beds. They are equipped with a telephone, a TV, Internet access, a safe and centrally regulated heating.\n"}]}],
+                    "fields":[{"id":401,"sid":"U_Telephone","columnName":"Telephone","originalValue":"00376639919","newValue":"00376737535"},{"id":1466,"sid":"U_Property_Type_2","columnName":"Property Type 2","originalValue":"-","newValue":"No"},{"id":1465,"sid":"U_Property_Type_1","columnName":"Property Type 1","originalValue":"-","newValue":"No"},{"id":1467,"sid":"U_Property_Type_3","columnName":"Property Type 3","originalValue":"-","newValue":"No"},{"id":1463,"sid":"U_All_Inclusive","columnName":"All inclusive","originalValue":"-","newValue":"No"},{"id":1462,"sid":"U_Self_Catering","columnName":"Self catering","originalValue":"-","newValue":"No"},{"id":393,"sid":"U_Export_Status","columnName":"Export Status","originalValue":"Sent","newValue":"Not Ready"},{"id":1464,"sid":"U_Family_Friendly","columnName":"Family Friendly","originalValue":"-","newValue":"No"}]
+                    } 
+                ]
+        }
