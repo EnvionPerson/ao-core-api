@@ -15,6 +15,8 @@ It is recommend to follow the “url” link values,
 applicable to retrieve resources. Instead of constructing your own URLs,
 to keep your client decoupled from implementation details.
 
+Please note that each AO Core API is pertinant to a single Core Database, hence when multiple databases exist, it is required to have multiple instances of the API configured
+
 ## Retrieve the Entry Point [GET]
 
 + Response 200 (application/json)
@@ -38,9 +40,9 @@ Resources related to profiles in the API.
 
         {["all", "test"]}
 
-## Permissions [/profiles/premissions]
+## Permissions [/profiles/permissions]
 
-### Premissions [GET]
+### Permissions [GET]
 
 + Response 200 (application/json)
 
