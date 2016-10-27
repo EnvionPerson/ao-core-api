@@ -563,6 +563,12 @@ Resources related to products in the API.
             } ]
         }
 
+## Link New Copy Items to Product [/copies?productId={sku_id}&profile={profile_name}]
+
++ Parameters
+    + sku_id (optional, number)
+    + profile_name (optional, string)
+
 ### Create and Link a New Copy [POST]
 
 + Request (application/json)
@@ -655,10 +661,10 @@ Resources related to Prices in the API.
 
 + Response 204
 
-## Create a Price [/prices/product/{id}]
+## Create a Price [/prices?productId={sku_id}]
 
 + Parameters
-    + id (required, number, `55`) ... ID of the Price owner (Product ID)
+    + sku_id (required, number, `55`) ... ID of the Price owner (Product ID)
 
 ### Create a Price [POST]
 
