@@ -3,14 +3,16 @@ HOST: http://server.aouk.co.uk/aoapi/v1
 
 # AO Core API
 
-AO is a simple API allowing consumers to view products and items.
+AO CORE API allows for AO Applications to connect to the AO Core Database and interact with the data stored.
+
+All the features of the AO Weborganiser are supported including Profiles and Permissions, and therefore allows for the creation of Customer bespoke UX.
 
 # AO Core API Root [/]
 
 This resource does not have any attributes. Instead it offers the initial
 API affordances in the form of the links in the JSON body.
 
-It is recommend to follow the “url” link values,
+It is recommend to follow the “URL” Link Values,
 [Link](https://tools.ietf.org/html/rfc5988) or Location headers where
 applicable to retrieve resources. Instead of constructing your own URLs,
 to keep your client decoupled from implementation details.
@@ -40,7 +42,7 @@ Resources related to profiles in the API.
 
         {["all", "test"]}
 
-## Permissions [/profiles/permissions]
+## Available Permissions [/profiles/permissions&{profile}]
 
 ### Permissions [GET]
 
@@ -63,7 +65,7 @@ Resources related to profiles in the API.
 
 ## Group Copy
 
-Resources related to copies in the API.
+Resources related to Copy Items in the API.
 
 ## Metadata [/copies/metadata]
 
@@ -120,19 +122,19 @@ Resources related to copies in the API.
                 "Styled":["Quark Tags","InDesign Tags","HTML Tags","Markdown"]}
         }
 
-## Copies Collection [/copies?limit={limit_num}&offset={offset_num}&profile={profile_name}]
+## Copy Item Collection [/copies?limit={limit_num}&offset={offset_num}&profile={profile_name}]
 
 + length
 + offset
 + total
-+ copies - An array of Copy objects.
++ copies - An array of Copy Items.
 
 + Parameters
     + limit_num (optional, number, `10`) ... Maximum number of posts to retrieve, default value is 10
     + offset_num (optional, number, `0`) ... offset
     + profile_name (optional, string, `hotels`) ... profile
 
-### List All Copies [GET]
+### List All Copy Items [GET]
 
 + Response 200 (application/json)
 
@@ -183,7 +185,7 @@ Resources related to copies in the API.
     + copy_id (required, number, `1`) ... Serial Number of the Copy
     + profile_name (optional, string, `hotels`) ... profile
 
-### View a Copy Detail [GET]
+### View a Copy Item Detail [GET]
 + Response 200 (application/json)
 
         {
@@ -196,7 +198,7 @@ Resources related to copies in the API.
             ]
         }
 
-## Retrive a Copy by name [/copies/{copy_name}/name?profile={profile_name}]
+## Retrive a Copy Item by name [/copies/{copy_name}/name?profile={profile_name}]
 
 May return many copies!
 
@@ -208,7 +210,7 @@ May return many copies!
     + copy_name (required, string, `copy name 1`) ... Name of the Copy
     + profile_name (optional, string, `hotels`) ... profile
 
-### View a Copy Detail [GET]
+### View a Copy Item in Detail [GET]
 + Response 200 (application/json)
 
         {
@@ -221,9 +223,9 @@ May return many copies!
             ]
         }
 
-## Create a new Copy [/copies]
+## Create a New Copy Item [/copies]
 
-### Create a New Copy [POST]
+### Create a New Copy Item [POST]
 
 + Request (application/json)
 
@@ -944,120 +946,205 @@ Resources related to documents in the API.
 ### Move document [GET]
 + Response 200
 
-## Group CEG to Core 
-Allowing import many products to AO Core System
-## Import products [/c2c/products]
+## Group Statistics
+Get product statistics by product type
+##  products [/statistic/test?column={column}&savedSearch={savedSearch}]
 
-### Import [POST]
+### Statistic [GET]
+
++ Response 200 (application/json)
+
+        {
+            "U_Product_Type":{
+                "0":3344,
+                "960":4998,
+                "423":832,
+                "973":8,
+                "974":1,
+                "975":3
+            }
+        }
+            
+        
+
+## Missing Product Data [/statistic/missproduct]
+
+### Missing [GET]
+
++ Response 200 (application/json)
+
+        {
+            "all":9186,
+            "price":9180,
+            "copy":8344,
+            "picture":9171
+        }
+        
+
+
+## Group Search
+Search Engine
+## Get operators [/search/operators]
+
+### Operators [GET]
+
++ Response 200 (application/json)
+
+        {
+            "operators":{
+                "DOESNT_EQUAL":"Doesn\u0027t equal",
+                "DOESNT_EXIST":"Doesn\u0027t exist",
+                "EQUALS":"Equals",
+                "STARTS_WITH":"Starts with",
+                "AFTER":"After",
+                "ISNT_EMPTY":"Isn\u0027t empty",
+                "LESS_THAN":"Less than",
+                "CONTAINS":"Contains",
+                "DOESNT_START_WITH":"Doesn\u0027t start with",
+                "BEFORE":"Before",
+                "DOESNT_CONTAIN":"Doesn\u0027t contain",
+                "GREATER_THAN":"Greater than",
+                "ENDS_WITH":"Ends with",
+                "DOESNT_END_WITH":"Doesn\u0027t end with",
+                "IS_EMPTY":"Is empty"
+            },
+            "typeSet":{
+                "date":[6,8],
+                "file":[21],
+                "pick":[1,19,22],
+                "char":[9,12],
+                "int":[2,3,23,10],
+                "multi":[24]
+            },
+            "operSet":{
+                "date":["EQUALS","IS_EMPTY","DOESNT_EQUAL","DOESNT_EXIST","ISNT_EMPTY","BEFORE","AFTER"],
+                "file":["EQUALS","STARTS_WITH","ENDS_WITH","CONTAINS","IS_EMPTY","DOESNT_EQUAL","DOESNT_START_WITH","DOESNT_END_WITH","DOESNT_CONTAIN","DOESNT_EXIST","ISNT_EMPTY","BEFORE","AFTER"],
+                "pick":["EQUALS","IS_EMPTY","DOESNT_EQUAL","DOESNT_EXIST","ISNT_EMPTY"],
+                "char":["EQUALS","STARTS_WITH","ENDS_WITH","CONTAINS","IS_EMPTY","DOESNT_EQUAL","DOESNT_START_WITH","DOESNT_END_WITH","DOESNT_CONTAIN","DOESNT_EXIST","ISNT_EMPTY"],
+                "int":["EQUALS","GREATER_THAN","LESS_THAN","IS_EMPTY","DOESNT_EQUAL","DOESNT_EXIST","ISNT_EMPTY"],
+                "multi":["CONTAINS","DOESNT_CONTAIN","IS_EMPTY","ISNT_EMPTY"]
+            },
+            "featureTypeSet":{
+                "date":[3],"pick":[5,2,8],"char":[7,0,4],"int":[1],"multi":[6]
+            }
+        }
+            
+        
+## Saved Search [/search/saved?metadataid={skus}]
+Get saved searches
+
+### Saved Search [GET]
+
++ Response 200 (application/json)
+
+        [ 
+            {"id":0, "name":"Default", "type":0},
+            {"id":22,"name":"Continents","type":0},
+            {"id":5,"name":"Countries","type":0},
+            {"id":23,"name":"Fiji Accomm","type":0},
+            {"id":1,"name":"Main","type":0},
+            {"id":6,"name":"States","type":0},
+            {"id":7,"name":"Territories","type":0},
+            {"id":33,"name":"Test Hotel","type":0},
+            {"id":31,"name":"Test Products","type":0},
+            {"id":25,"name":"test-search","type":0},
+            {"id":3,"name":"Worlds","type":0}
+        ]
+
+## Product search [/search/product?limit={limit}&ofset={ofset}&profile={profile}]
+
+### Search [POST]
 
 + Request (application/json)
 
         {
-            "products": [{
-                "product": {
-                    "aoidCode" : "AA000001",
-                    "fields" : {
-                        "ID" : "18447",
-                        "ShipID" : 1,
-                        "ShipName" : "Explorer Of The Seas (ShipName)",
-                        "Language" : "en",
-                        "Gross Tonnage" : "138,000",
-                        "Length" : "1,025 ft",
-                        "Draft" : "29 ft",
-                        "Cruising Speed" : "22 knots",
-                        "Occupancy" : "3,114 double occupancy, 3,807 maximum",
-                        "Max Beam" : "157.5 feet",
-                        "Electric Current" : "110/220 VAC/1500 watts",
-                        "Ship's Registry" : "Bahamas  (note Registry seems to be the same)",
-                        "Entered Service" : "November 18, 2001",
-                        "Last Refurbished" : "April,  2009",
-                        "Rock-climbing wall" : true,
-                        "Ice-skating rink" : true,
-                        "Mini-golf course" : true,
-                        "Basketball court" : true,
-                        "Jogging and In-line skating tracks" : true,
-                        "In-line skating track" : true,
-                        "Golf simulator" : "",
-                        "Officers" : "Italian",
-                        "Crew" : "International"
-                    },
-                    "skuLinkRules" : {
-                        "anchorLinkRules" : [12, 72, 14, 989],
-                        "parentChildLinkRules" : [30, 24, 67, 4574]
-                    }
-                },
-                "copy":[{
-                    "chainPosition" : 0,
-                    "name": "Ship Facts",
-                    "fields" : {
-                        "Title" : "Ship Facts",
-                        "Content" : "<ul>\n<li><b>Gross Tonnage:</b> 138,000</li>\n<li><b>Length:</b> 1,025 ft</li>\n<li><b>Max Beam:</b> 157.5 ft</li>\n<li><b>Draft:</b> 29 ft</li>\n<li><b>Cruising Speed:</b> 22 knots</li>\n</ul>",
-                        "Language" : "en",
-                        "Format" : "bold, italic",
-                        "Styled" : "html",
-                        "Comments" : "",
-                        "Category" : "",
-                        "Type" : 0
-                    }
-                }],
-                "prices":[{
-                    "name":"test.price",
-                    "fields":{
-                        "Price":"10.50"
-                    }
-                }],
-                "pictures":[{
-                    "name":"test-image.jpg",
-                    "fields":{
-                        "Language":"English"
-                    }
-                }],
-                "logos":[],
-                "movies":[],
-                "sounds":[]
-            }],
-            "defaultRules":{
-                "skuRules":{
-                    "objectRules":[],
-                    "fieldRules":[],
-                    "objectTargetAction":"compare",
-                    "anchorActionOnChange":"flag",
-                    "comparePriorityLevel":5,
-                    "embargoDate":"11/03/2015",
-                    "embargoTime":"11:00:00",
-                    "dataSource":"GTA"
-                },
-                "copyRules":{
-                    "objectRules":[{
-                        "name":"test-copy_name",
-                        "objectTargetAction":"live",
-                        "anchorActionOnChange":"flag",
-                        "anchorLinkRules":[1,2,6]
-                    }],
-                    "fieldRules":[] 
-                },
-                "priceRules":{
-                    "objectRules":[],
-                    "fieldRules":[],
-                    "objectTargetAction":"compare"
-                },
-                "pictureRules":{
-                    "objectRules":[],
-                    "fieldRules":[],
-                    "objectTargetAction":"compare"
-                },
-                "logoRules":{},
-                "movieRules":{},
-                "soundRules":{}
-            }
+        }
+        
++ Response 200 (application/json)
+
+        {
+        }
+        
+
+## Group Composites
+
+## Composites [/composites]
+
+### Composites [GET]
+
++ Response 200 (application/json)
+
+        {
+            
+        }
+
+## Group Features
+
+## Get Metadata Features [/features/metadata]
+
+### Metadata [GET]
+
++ Response 200 (application/json)
+
+        {
+            
+        }
+
+## Get Product Features [/features/{id}]
+
+### Product Features [GET]
+
++ Response 200 (application/json)
+
+        {
+            
+        }
+
+
+## Group Multi Edit Items
+
+## Multi Edit [/multiedit]
+
+### Multi Edit [GET]
+
++ Request (application/json)
+
+        {
+           
         }
         
 
 + Response 200 (application/json)
 
         {
-            "AA00001": "OK"
+            
         }
+
+
+## Group Pages
+
+## Pages [/pages]
+
+### Pages [GET]
+
++ Response 200 (application/json)
+
+        {
+            
+        }
+
+## Group Logos
+
+## Logos [/logos]
+
+### Logos [GET]
+
++ Response 200 (application/json)
+
+        {
+            
+        }
+
 
 ## Group Comparison products and copies
 
